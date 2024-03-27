@@ -1,4 +1,4 @@
-from django.shortcuts import get_object_or_404, get_list_or_404, render
+from django.shortcuts import get_list_or_404, get_object_or_404, render
 
 from django.utils import timezone
 
@@ -7,13 +7,14 @@ from .models import Category, Post
 POST_QUANTITY = 5
 
 POST = Post.objects.filter(
-        is_published=True,
-        category__is_published=True
+    is_published=True,
+    category__is_published=True
 )
 
+
 def post_filter(model):
-    time_now = model.filter(pub_date__date__lte=timezone.now())
-    return time_now
+    return model.filter(pub_date__date__lte=timezone.now())
+
 
 def index(request):
     template = 'blog/index.html'
