@@ -1,16 +1,18 @@
-from django.db import models
 from django.contrib.auth import get_user_model
-from core.models import BaseModel
+
+from django.db import models
+
+from core.models import PublishedCreatedAtModel
 
 User = get_user_model()
 
 
-class Category(BaseModel):
-    title = models.CharField(max_length=256, verbose_name='Заголовок')
-    description = models.TextField(verbose_name='Описание')
+class Category(PublishedCreatedAtModel):
+    title = models.CharField('Заголовок', max_length=256)
+    description = models.TextField('Описание')
     slug = models.SlugField(
+        'Идентификатор',
         unique=True,
-        verbose_name='Идентификатор',
         help_text=(
             'Идентификатор страницы для URL; разрешены символы '
             'латиницы, цифры, дефис и подчёркивание.')
@@ -24,8 +26,8 @@ class Category(BaseModel):
         return self.title
 
 
-class Location(BaseModel):
-    name = models.CharField(max_length=256, verbose_name='Название места')
+class Location(PublishedCreatedAtModel):
+    name = models.CharField('Название места', max_length=256)
 
     class Meta:
         verbose_name = 'местоположение'
@@ -35,11 +37,11 @@ class Location(BaseModel):
         return self.name
 
 
-class Post(BaseModel):
-    title = models.CharField(max_length=256, verbose_name='Заголовок')
-    text = models.TextField(verbose_name='Текст')
+class Post(PublishedCreatedAtModel):
+    title = models.CharField('Заголовок', max_length=256)
+    text = models.TextField('Текст')
     pub_date = models.DateTimeField(
-        verbose_name='Дата и время публикации',
+        'Дата и время публикации',
         help_text=(
             'Если установить дату и время в будущем — можно '
             'делать отложенные публикации.'
@@ -65,6 +67,7 @@ class Post(BaseModel):
     )
 
     class Meta:
+        ordering = ('-pub_date',)
         verbose_name = 'публикация'
         verbose_name_plural = 'Публикации'
 

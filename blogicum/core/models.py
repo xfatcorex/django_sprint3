@@ -1,15 +1,15 @@
 from django.db import models
 
 
-class BaseModel(models.Model):
+class PublishedCreatedAtModel(models.Model):
     is_published = models.BooleanField(
+        'Опубликовано',
         default=True,
-        verbose_name='Опубликовано',
         help_text='Снимите галочку, чтобы скрыть публикацию.'
     )
     created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name='Добавлено'
+        'Добавлено',
+        auto_now_add=True
     )
 
     class Meta:

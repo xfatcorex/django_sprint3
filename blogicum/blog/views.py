@@ -1,27 +1,29 @@
-from django.shortcuts import render, get_object_or_404, get_list_or_404
+from django.shortcuts import get_object_or_404, get_list_or_404, render
 
-from .models import Post, Category
+from django.utils import timezone
 
-from datetime import datetime
+from .models import Category, Post
 
+POST_QUANTITY = 5
+
+POST = Post.objects.filter(
+        is_published=True,
+        category__is_published=True
+)
+
+def post_filter(model):
+    time_now = model.filter(pub_date__date__lte=timezone.now())
+    return time_now
 
 def index(request):
     template = 'blog/index.html'
-    post_list = Post.objects.filter(
-        is_published=True,
-        category__is_published=True,
-        pub_date__date__lte=datetime.now()
-    ).order_by('-pub_date')[:5]
+    post_list = post_filter(POST)[:POST_QUANTITY]
     context = {'post_list': post_list}
     return render(request, template, context)
 
 
 def post_detail(request, post_id):
-    post = get_object_or_404(Post.objects.filter(
-        pub_date__lte=datetime.now(),
-        is_published=True,
-        category__is_published=True
-    ), pk=post_id)
+    post = get_object_or_404(post_filter(POST), pk=post_id)
     context = {'post': post}
     return render(request, 'blog/detail.html', context)
 
@@ -34,9 +36,8 @@ def category_posts(request, category_slug):
         is_published=True
     )
     post_list = get_list_or_404(
-        category.posts,
-        is_published=True,
-        pub_date__lte=datetime.now()
+        post_filter(category.posts),
+        is_published=True
     )
     context = {'category': category, 'post_list': post_list}
     return render(request, template, context)
